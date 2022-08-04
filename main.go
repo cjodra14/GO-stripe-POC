@@ -27,6 +27,7 @@ func main() {
 	r.PUT("/api/customer", handlers.UpdateCustomer)
 	r.GET("api/customer", handlers.GetCustomers)
 	r.GET("api/customer/email", handlers.GetCustomersByEmail)
+	r.DELETE("api/customer",handlers.DeleteCustomerByID)
 
 	r.Run(":8413")
 }

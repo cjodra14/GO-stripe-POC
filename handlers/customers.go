@@ -7,6 +7,7 @@ import (
 	"stripe/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/customer"
 )
@@ -44,8 +45,8 @@ func GetCustomers(c *gin.Context) {
 
 	params := &stripe.CustomerListParams{}
 	params.Single = true
-	i:= customer.List(params)
-	for i.Next(){
+	i := customer.List(params)
+	for i.Next() {
 		c := i.Customer()
 		fmt.Println(c.ID)
 	}
@@ -78,14 +79,30 @@ func GetCustomersByEmail(c *gin.Context) {
 
 	apiKey := os.Getenv("SK_TEST_KEY")
 	stripe.Key = apiKey
-	
+
 	params := &stripe.CustomerListParams{
 		Email: &json.Email,
 	}
 	params.Single = true
-	i:= customer.List(params)
-	for i.Next(){
+	i := customer.List(params)
+	for i.Next() {
 		c := i.Customer()
 		fmt.Println(c.ID)
+		fmt.Println(c.Email)
 	}
+}
+
+func DeleteCustomerByID(c *gin.Context) {
+	var json models.CustomerJSON
+	c.BindJSON(&json)
+
+	apiKey := os.Getenv("SK_TEST_KEY")
+	stripe.Key = apiKey
+
+	customer, err := customer.Del(json.ID, nil)
+	if err != nil{
+		logrus.Error(err)
+	}
+	
+	fmt.Println("Deleted customer ", customer)
 }
