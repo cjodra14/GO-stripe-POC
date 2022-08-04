@@ -25,6 +25,7 @@ func main() {
 	
 	r.POST("/api/customer", handlers.CreateCustomer)
 	r.PUT("/api/customer",handlers.UpdateCustomer)
+	r.GET("api/customer", handlers.GetCustomers)
 
 	r.Run(":8413")
 }

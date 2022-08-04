@@ -38,6 +38,19 @@ func CreateCustomer(c *gin.Context) {
 	fmt.Println(createdCustomer)
 }
 
+func GetCustomers(c *gin.Context) {
+	apiKey := os.Getenv("SK_TEST_KEY")
+	stripe.Key = apiKey
+	
+	params := &stripe.CustomerListParams{}
+	params.Single = true
+	i:= customer.List(params)
+	for i.Next(){
+		c := i.Customer()
+		fmt.Println(c.ID)
+	}
+}
+
 func UpdateCustomer(c *gin.Context) {
 	var json models.CustomerJSON
 	c.BindJSON(&json)
