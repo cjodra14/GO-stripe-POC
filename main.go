@@ -4,6 +4,7 @@ import (
 	"log"
 	"stripe/handlers"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -20,14 +21,16 @@ func main() {
 	// set up server
 	r := gin.Default()
 
+	r.Use(cors.Default())
+
 	// our basic charge API route
 	r.POST("/api/charges", handlers.ChargeEUR)
-
+	
 	r.POST("/api/customer", handlers.CreateCustomer)
 	r.PUT("/api/customer", handlers.UpdateCustomer)
 	r.GET("api/customer", handlers.GetCustomers)
 	r.GET("api/customer/email", handlers.GetCustomersByEmail)
-	r.DELETE("api/customer",handlers.DeleteCustomerByID)
+	r.DELETE("api/customer", handlers.DeleteCustomerByID)
 
 	r.Run(":8413")
 }
