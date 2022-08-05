@@ -20,15 +20,17 @@ func CreateCustomer(c *gin.Context) {
 	apiKey := os.Getenv("SK_TEST_KEY")
 	stripe.Key = apiKey
 
+	fmt.Println(json)
+
 	params := &stripe.CustomerParams{
 		Email:         &json.Email,
 		Name:          &json.Name,
 		TaxExempt:     &json.TaxExempt,
 		PaymentMethod: &json.PaymentMethod,
-		InvoiceSettings: &stripe.CustomerInvoiceSettingsParams{
-			DefaultPaymentMethod: &json.InvoiceSettings.DefaultPaymentMethod,
-		},
-		PreferredLocales: stripe.StringSlice(json.PreferredLocales),
+		// InvoiceSettings: &stripe.CustomerInvoiceSettingsParams{
+		// 	DefaultPaymentMethod: &json.InvoiceSettings.DefaultPaymentMethod,
+		// },
+		// PreferredLocales: stripe.StringSlice(json.PreferredLocales),
 	}
 
 	createdCustomer, err := customer.New(params)
@@ -40,16 +42,41 @@ func CreateCustomer(c *gin.Context) {
 }
 
 func GetCustomers(c *gin.Context) {
+
+	type Customers struct {
+		Customers []stripe.Customer `json:"customers,omitempty"`
+	}
 	apiKey := os.Getenv("SK_TEST_KEY")
 	stripe.Key = apiKey
+
+	customers := Customers{}
+	customerSlice := []stripe.Customer{}
 
 	params := &stripe.CustomerListParams{}
 	params.Single = true
 	i := customer.List(params)
 	for i.Next() {
 		c := i.Customer()
-		fmt.Println(c.ID)
+		customerInfo := stripe.Customer{
+			ID:       c.ID,
+			Name:     c.Name,
+			Email:    c.Email,
+			Address:  c.Address,
+			Balance:  c.Balance,
+			Created:  c.Created,
+			Currency: c.Currency,
+		}
+		customerSlice = append(customerSlice, customerInfo)
 	}
+	customers.Customers = customerSlice
+	fmt.Println(customers)
+
+	// customerBytes, err := json.Marshal(customers)
+	// if err != nil {
+	// 	c.String(http.StatusBadRequest, "Request failed")
+	// 	return
+	// }
+	c.JSON(http.StatusOK, customerSlice)
 }
 
 func UpdateCustomer(c *gin.Context) {
@@ -74,22 +101,26 @@ func UpdateCustomer(c *gin.Context) {
 }
 
 func GetCustomersByEmail(c *gin.Context) {
-	var json models.CustomerJSON
-	c.BindJSON(&json)
+	var customerSelectionJSON models.CustomerJSON
+	c.BindJSON(&customerSelectionJSON)
 
 	apiKey := os.Getenv("SK_TEST_KEY")
 	stripe.Key = apiKey
 
 	params := &stripe.CustomerListParams{
-		Email: &json.Email,
+		Email: &customerSelectionJSON.Email,
 	}
+
 	params.Single = true
+
 	i := customer.List(params)
 	for i.Next() {
 		c := i.Customer()
 		fmt.Println(c.ID)
 		fmt.Println(c.Email)
 	}
+
+	c.JSON(http.StatusOK, i.Customer())
 }
 
 func DeleteCustomerByID(c *gin.Context) {
@@ -100,9 +131,9 @@ func DeleteCustomerByID(c *gin.Context) {
 	stripe.Key = apiKey
 
 	customer, err := customer.Del(json.ID, nil)
-	if err != nil{
+	if err != nil {
 		logrus.Error(err)
 	}
-	
-	fmt.Println("Deleted customer ", customer)
+
+	c.JSON(http.StatusOK, customer)
 }

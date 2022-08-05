@@ -25,12 +25,14 @@ func main() {
 
 	// our basic charge API route
 	r.POST("/api/charges", handlers.ChargeEUR)
+	r.POST("api/charges/intent", handlers.PaymentIntent)
 	
 	r.POST("/api/customer", handlers.CreateCustomer)
 	r.PUT("/api/customer", handlers.UpdateCustomer)
 	r.GET("api/customer", handlers.GetCustomers)
 	r.GET("api/customer/email", handlers.GetCustomersByEmail)
 	r.DELETE("api/customer", handlers.DeleteCustomerByID)
+	
 
 	r.Run(":8413")
 }
