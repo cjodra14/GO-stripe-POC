@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe PoC</title>
+</head>
+<body>
+    <script>
+        fetch('http://localhost:8413/api/customer')
+            .then(response =>response.json())
+            .then(data => console.log(data))
+            .catch(error => console.log('ERROR'))
+    </script>
+
+
+
+    <!-- <form action="http://localhost:8413/api/customer" method="post">
+        <label for="name">First name:</label>
+        <input type="text" id="name" name="name"><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br><br>
+        <p>Choose your tax exemption:</p>
+        <input type="radio" id="none" name="tax_exemption" value="none">
+        <label for="none">None</label><br>
+        <input type="radio" id="exempt" name="tax_exemption" value="exempt">
+        <label for="exempt">Exempt</label><br>
+        <input type="radio" id="reverse" name="tax_exemption" value="reverse">
+        <label for="reverse">Reverse</label>
+        <input type="submit" value="Submit">
+        <label for="payment_method">Payment Method:</label>
+        <input type="text" id="payment_method" name="payment_method"><br><br>
+      </form> -->
+</body>
+</html>
