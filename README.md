@@ -50,6 +50,16 @@ curl --header "Content-Type: application/json" \
 
 ```
 
+Get Customer by ID
+
+```
+curl --header "Content-Type: application/json" \
+  --request GET \
+  --data '{"cus_MISTvcjnQPpQlH"}' \
+  http://localhost:8413/api/customer
+```
+
+
 Get All Customers :
 ```
 curl --request GET \                            
@@ -67,4 +77,15 @@ Make a charge:
   http://localhost:8413/api/charges 
 ```
 
+Get Products 
 
+```
+curl --request GET \                            
+ http://localhost:8413/api/products
+```
+Get Subscriptions
+
+```
+curl --request GET \                            
+ http://localhost:8413/api/subscriptions
+```

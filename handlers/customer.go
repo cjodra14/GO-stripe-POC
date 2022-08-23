@@ -23,14 +23,8 @@ func CreateCustomer(c *gin.Context) {
 	fmt.Println(json)
 
 	params := &stripe.CustomerParams{
-		Email:         &json.Email,
-		Name:          &json.Name,
-		TaxExempt:     &json.TaxExempt,
-		PaymentMethod: &json.PaymentMethod,
-		// InvoiceSettings: &stripe.CustomerInvoiceSettingsParams{
-		// 	DefaultPaymentMethod: &json.InvoiceSettings.DefaultPaymentMethod,
-		// },
-		// PreferredLocales: stripe.StringSlice(json.PreferredLocales),
+		Email: &json.Email,
+		Name:  &json.Name,
 	}
 
 	createdCustomer, err := customer.New(params)
@@ -39,6 +33,7 @@ func CreateCustomer(c *gin.Context) {
 		return
 	}
 	fmt.Println(createdCustomer)
+	c.JSON(http.StatusOK, createdCustomer)
 }
 
 func GetCustomers(c *gin.Context) {
@@ -68,7 +63,7 @@ func GetCustomers(c *gin.Context) {
 		}
 		customerSlice = append(customerSlice, customerInfo)
 	}
-	customers.Customers = customerSlice
+	// customers.Customers = customerSlice
 	fmt.Println(customers)
 
 	// customerBytes, err := json.Marshal(customers)
@@ -121,6 +116,21 @@ func GetCustomersByEmail(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, i.Customer())
+}
+
+func GetCustomersByID(c *gin.Context) {
+	var customerSelectionJSON models.CustomerJSON
+	c.BindJSON(&customerSelectionJSON)
+
+	apiKey := os.Getenv("SK_TEST_KEY")
+	stripe.Key = apiKey
+
+	customerData, err := customer.Get(customerSelectionJSON.ID, nil)
+	if err != nil {
+		logrus.Error(err)
+	}
+
+	c.JSON(http.StatusOK, customerData)
 }
 
 func DeleteCustomerByID(c *gin.Context) {
